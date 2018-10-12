@@ -10,13 +10,13 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  emailInput = new FormControl("", Validators.required);
+  emailInput = new FormControl("", [Validators.required, Validators.email]);
   passwordInput = new FormControl("", Validators.required);
 
   constructor(fb: FormBuilder) {
     this.loginForm = fb.group({
-      "email": this.emailInput,
-      "password": this.passwordInput
+      email: this.emailInput,
+      password: this.passwordInput
     });
    }
 
