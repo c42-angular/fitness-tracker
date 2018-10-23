@@ -3,7 +3,11 @@
         <p>I'm the sidenav!</p>
     </mat-sidenav>
     <mat-sidenav-content>
-        <button (click)="sidenav.toggle()">Show Sidenav</button>
-        <router-outlet></router-outlet>
+        <mat-toolbar color="primary">
+            My Toolbar
+        </mat-toolbar>
+        <main>
+            <router-outlet></router-outlet>
+        </main>        
     </mat-sidenav-content>
 </mat-sidenav-container>
