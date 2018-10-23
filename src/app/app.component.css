@@ -1,0 +1,7 @@
+mat-sidenav-container, mat-sidenav-content, mat-sidenav {
+    height: 100%; /* sidenav and its content occupies entire height of its parent i.e body */
+}
+
+mat-sidenav {
+    width: 200px; /* sidenav a bit wider */
+}
