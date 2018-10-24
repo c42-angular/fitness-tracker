@@ -1,6 +1,19 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav role="navigation">
-        <p>I'm the sidenav!</p>
+        <mat-nav-list>
+            <a mat-list-item routerLink="/signup">
+                <mat-icon>face</mat-icon>
+                <span class="nav-caption">Signup</span>
+            </a>
+            <a mat-list-item routerLink="/login">
+                <mat-icon>lock_open</mat-icon>
+                <span class="nav-caption">Login</span>
+            </a>
+            <a mat-list-item routerLink="/training">
+                <mat-icon>rowing</mat-icon>
+                <span class="nav-caption">Training</span>
+            </a>
+        </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
@@ -17,9 +30,9 @@
             <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
                 <!-- ul - to be semantically correct; fxLayout - to arrange child elements within -->
                 <ul fxLayout fxLayoutGap="10px" class="navigation-items">
-                    <li><a routerLink="/signup">Signup</a></li>
-                    <li><a routerLink="/login">Login</a></li>
-                    <li><a routerLink="/training">Training</a></li>
+                    <a routerLink="/signup">Signup</a>
+                    <a routerLink="/login">Login</a>
+                    <a routerLink="/training">Training</a>
                 </ul>                
             </div>
         </mat-toolbar>
