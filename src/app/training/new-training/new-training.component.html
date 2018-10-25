@@ -1,3 +1,17 @@
-<p>
-  new-training works!
-</p>
+<!-- 'fxLayout' attribute doesn't seem to be strictly required , 
+  just 'fxLayoutAlign' seems to make 'fxLayout' implicit -->
+<section fxLayout fxLayoutAlign="center">
+  <mat-card fxFlex="400px">
+      <!-- <mat-card-header>
+        <mat-card-title>Time to start a workout!</mat-card-title>
+      </mat-card-header> -->
+      <mat-card-title>Time to start a workout!</mat-card-title>
+      <mat-card-content>
+        Select type of training
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button type="submit">Start</button>
+      </mat-card-actions>
+  </mat-card>
+</section>
