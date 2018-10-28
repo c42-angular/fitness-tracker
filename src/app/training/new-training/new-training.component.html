@@ -1,12 +1,12 @@
 <!-- 'fxLayout' attribute doesn't seem to be strictly required , 
   just 'fxLayoutAlign' seems to make 'fxLayout' implicit -->
-<section fxLayout fxLayoutAlign="center">
-  <mat-card fxFlex="400px" fxLayout="column" fxLayoutAlign=" center">
+<section fxLayout fxLayoutAlign="center" class="card">
+  <mat-card fxFlex.xs="100%" fxFlex="400px">
       <!-- <mat-card-header>
         <mat-card-title>Time to start a workout!</mat-card-title>
       </mat-card-header> -->
-      <mat-card-title>Time to start a workout!</mat-card-title>
-      <mat-card-content>
+      <mat-card-title fxLayoutAlign="center">Time to start a workout!</mat-card-title>
+      <mat-card-content fxLayoutAlign="center">
         <mat-form-field>
           <mat-select placeholder="Select type of training">
             <mat-option value="crunches">Crunches</mat-option>
@@ -16,7 +16,7 @@
         </mat-form-field>
       </mat-card-content>
 
-      <mat-card-actions>
+      <mat-card-actions fxLayoutAlign="center">
         <button mat-button type="submit">Start</button>
       </mat-card-actions>
   </mat-card>
