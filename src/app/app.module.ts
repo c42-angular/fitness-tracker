@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingConfirmComponent } from './training/current-training/stop-training-confirm.component';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,7 @@ import { StopTrainingConfirmComponent } from './training/current-training/stop-t
     AppRoutingModule,
     FlexLayoutModule    
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent],
   entryComponents: [
     StopTrainingConfirmComponent

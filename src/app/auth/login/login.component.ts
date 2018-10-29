@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent {
   emailInput = new FormControl("", [Validators.required, Validators.email]);
   passwordInput = new FormControl("", Validators.required);
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private authService: AuthService) {
     this.loginForm = fb.group({
       email: this.emailInput,
       password: this.passwordInput
@@ -22,5 +23,9 @@ export class LoginComponent {
 
    onSubmit() {
      console.log(this.loginForm);
+     this.authService.login({
+       email: this.loginForm.value.email,
+       password: this.loginForm.value.password
+     });
    }
 }
