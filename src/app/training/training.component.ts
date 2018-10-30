@@ -12,7 +12,7 @@ export class TrainingComponent implements OnInit {
   constructor(private trainingService: TrainingService) { }
 
   ngOnInit() {
-    this.trainingService.trainingSelected.subscribe(newTraining => {
+    this.trainingService.trainingChanged.subscribe(newTraining => {
       console.log('Message is ' + newTraining);
       console.log('Boolean is ' + (newTraining != null));
       this.trainingInProgress = newTraining != null;

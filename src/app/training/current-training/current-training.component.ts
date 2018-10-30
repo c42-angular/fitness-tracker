@@ -1,7 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { StopTrainingConfirmComponent } from './stop-training-confirm.component';
+import { TrainingService } from '../training.service';
+import { Training } from '../training.model';
 
 @Component({
   selector: 'app-current-training',
@@ -9,25 +11,28 @@ import { StopTrainingConfirmComponent } from './stop-training-confirm.component'
   styleUrls: ['./current-training.component.css']
 })
 export class CurrentTrainingComponent implements OnInit {
-  @Output() trainingStopped = new EventEmitter();
   progressPercent = 0;
   interval;
+  currentTraining: Training;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 
   ngOnInit() {
+    this.currentTraining = this.trainingService.getCurrentTraining();
     this.startOrResumeTraining();
   }
 
   startOrResumeTraining() {
+    const steps = (this.currentTraining.duration/60) * 1000;
+
     this.interval = setInterval(() => {
       if (this.progressPercent >= 100) {
         clearInterval(this.interval);
+        this.trainingService.completeTraining();
         return;
       }
-      this.progressPercent += 20;
-      console.log("Progress: " + this.progressPercent + " %");
-    }, 1000);
+      this.progressPercent += 1;
+    }, steps);
   }
 
   stopTraining() {
@@ -43,7 +48,7 @@ export class CurrentTrainingComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
       if (result === "yes") {
-        this.trainingStopped.emit();
+        this.trainingService.cancelTraining(this.progressPercent);
       } else {
         this.startOrResumeTraining();
       }
