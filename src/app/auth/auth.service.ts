@@ -17,8 +17,8 @@ export class AuthService {
             email: authData.email,
             userId: "id:" + (Math.random() * 100000)
         };
-        this.authEvent.next(this.isAuth());
-        this.router.navigate(['/training']);
+
+        this.proceedToLogin()
     }
 
     login(authData: AuthData) {
@@ -26,9 +26,14 @@ export class AuthService {
             email: authData.email,
             userId: "id:" + (Math.random() * 100000)
         };
+
+        this.proceedToLogin();
+    }    
+
+    proceedToLogin() {
         this.authEvent.next(this.isAuth());
         this.router.navigate(['/training']);
-    }    
+    }
 
     logout() {
         this.user = null;
