@@ -53,4 +53,8 @@ export class TrainingService {
         this.trainingChanged.next(null);
         console.log(cancelledTraining);
     }
+
+    getPastTrainings() {
+        return this.pastTrainings.slice();
+    }
 }
