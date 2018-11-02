@@ -1,7 +1,10 @@
 import { Subject } from "rxjs";
+import { AngularFirestore } from "@angular/fire/firestore";
 
 import { Training } from "./training.model";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class TrainingService {
     public trainingChanged = new Subject<Training>();
     private availableTrainings: Training[] = [
@@ -12,6 +15,12 @@ export class TrainingService {
     ];
     private pastTrainings: Training[] = [];
     private currentTraining: Training;
+
+    constructor(db: AngularFirestore){
+        db.collection('availableTrainings').valueChanges().subscribe(result => {
+            console.log(result);
+        });
+    }
 
     getAvailableTrainings() {
         return this.availableTrainings.slice();
