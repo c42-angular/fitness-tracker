@@ -1,47 +1,50 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 import { User } from "./user.model";
 import { AuthData } from "./auth-data.model";
+import { auth } from 'firebase';
+import { SubjectSubscriber } from 'rxjs/internal/Subject';
 
 @Injectable()
 export class AuthService {
     authEvent = new Subject<boolean>();
     private user: User;
+    private isAuthenticated = false;
     
-    constructor(private router: Router){}
+    constructor(private router: Router, private afAuth: AngularFireAuth){}
 
     register(authData: AuthData) {
-        this.user = {
-            email: authData.email,
-            userId: "id:" + (Math.random() * 100000)
-        };
-
-        this.proceedToLogin()
+        this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password).then(
+            success => this.proceedToLogin(),
+            error => console.log(error)
+        );
     }
 
     login(authData: AuthData) {
-        this.user = {
-            email: authData.email,
-            userId: "id:" + (Math.random() * 100000)
-        };
+        this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password).then(
+            success => this.proceedToLogin(),
+            error => console.log(error)            
+        );
 
         this.proceedToLogin();
     }    
 
     proceedToLogin() {
+        this.isAuthenticated = true;
         this.authEvent.next(this.isAuth());
         this.router.navigate(['/training']);
     }
 
     logout() {
-        this.user = null;
+        this.isAuthenticated = false;
         this.authEvent.next(this.isAuth());
         this.router.navigate(['/login']);
     }
 
     isAuth() {
-        return this.user != null;
+        return this.isAuthenticated;
     }
 }
