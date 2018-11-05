@@ -1,5 +1,5 @@
 export interface Training {
-    id: number;
+    id: string;
     name: string;
     duration: number;
     calories: number;

@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from "@angular/fire/firestore";
 
@@ -8,42 +8,43 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class TrainingService {
     public trainingChanged = new Subject<Training>();
+    public trainingsChanged = new Subject<Training[]>();
+    public finishedTrainingsChanged = new Subject<Training[]>();
+
     private availableTrainings: Training[] = [];
     //     { id: 1, name: 'Crunches', duration: 30, calories: 100 },
     //     { id: 2, name: 'Squats', duration: 120, calories: 300 },
     //     { id: 3, name: 'Sit-ups', duration: 300, calories: 500 },
     //     { id: 4, name: 'Yoga', duration: 600, calories: 275 }
     // ];
-    private pastTrainings: Training[] = [];
+    //private pastTrainings: Training[] = [];
     private currentTraining: Training;
 
-    constructor(db: AngularFirestore){
-       db.collection('availableTrainings')
-            .snapshotChanges()
-            .pipe(
-                map(actions => {
-                    return actions.map(a => {
-                        const data = a.payload.doc.data();
-                        const id = a.payload.doc.id;
-                        return {
-                            id, 
-                            name: data['name'], 
-                            calories: data['calories'], 
-                            duration: data['duration']
-                        };
-                    }
-                )}
-            )
-            ).subscribe(trainings => {
-                console.log(trainings);
-            });        
-    }
+    constructor(private db: AngularFirestore){}
 
-    getAvailableTrainings() {
-        return this.availableTrainings.slice();
+    fetchAvailableTrainings() {
+        this.db.collection('availableTrainings')
+        .snapshotChanges()
+        .pipe(
+            map(actions => {
+                return actions.map(a => {
+                    const data = a.payload.doc.data();
+                    const id = a.payload.doc.id;
+                    return {
+                        id: id, 
+                        name: data['name'], 
+                        duration: data['duration'],
+                        calories: data['calories'] 
+                    };
+                }
+            )}
+        ))
+        .subscribe((trainings: Training[]) => {
+            this.availableTrainings = trainings;
+            this.trainingsChanged.next([...this.availableTrainings]);
+        });        
     }
-
-    selectNewTraining(trainingId: number) {
+    selectNewTraining(trainingId: string) {
         this.currentTraining = this.availableTrainings.find(t => t.id === trainingId);
         this.trainingChanged.next(this.getCurrentTraining());
     }
@@ -58,11 +59,12 @@ export class TrainingService {
             date: new Date(),
             state: 'completed'
         };
-        this.pastTrainings.push(completedTraining);
+
+        this.saveFinishedTraining(completedTraining);
 
         this.currentTraining = null;
         this.trainingChanged.next(null);
-        console.log(completedTraining);
+        console.log(completedTraining);    
     }
 
     cancelTraining(progress: number) {
@@ -73,14 +75,26 @@ export class TrainingService {
             calories: this.currentTraining.calories * progress / 100,
             state: 'cancelled'
         };
-        this.pastTrainings.push(cancelledTraining);
+
+        this.saveFinishedTraining(cancelledTraining);
 
         this.currentTraining = null;
         this.trainingChanged.next(null);
-        console.log(cancelledTraining);
+        console.log(cancelledTraining);    
     }
 
-    getPastTrainings() {
-        return this.pastTrainings.slice();
+    fetchPastTrainings() {
+        //return this.pastTrainings.slice();
+
+        return this.db.collection('finishedTrainings')
+        .valueChanges()        
+        .subscribe((trainings: Training[]) => {
+            this.finishedTrainingsChanged.next(trainings);
+        });        
+    }
+
+    private saveFinishedTraining(training: Training) {
+
+        this.db.collection('finishedTrainings').add(training);
     }
 }
