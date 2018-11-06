@@ -16,13 +16,27 @@ export class AuthService {
     
     constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService, private trainingService: TrainingService){}
 
+    initAuthSubscriptions() {
+        this.afAuth.authState.subscribe(user => {
+            if (user) {
+                this.isAuthenticated = true;
+                this.authEvent.next(true);
+                this.router.navigate(['/training']);
+            } else {
+                this.trainingService.cancelSubscriptions();
+                this.isAuthenticated = false;
+                this.authEvent.next(false);
+                this.router.navigate(['/login']);
+            }
+        });
+    }
+
     register(authData: AuthData) {
         this.uiService.loadingStateChanged.next(true);
 
         this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password).then(
             success => {
                 this.uiService.loadingStateChanged.next(false);
-                this.proceedToLogin();
             },
             error => {
                 this.uiService.loadingStateChanged.next(false);
@@ -37,7 +51,6 @@ export class AuthService {
         this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password).then(
             success => {
                 this.uiService.loadingStateChanged.next(false);
-                this.proceedToLogin();
             },
             error => {
                 this.uiService.loadingStateChanged.next(false);
@@ -46,18 +59,8 @@ export class AuthService {
         );
     }    
 
-    proceedToLogin() {
-        this.isAuthenticated = true;
-        this.authEvent.next(this.isAuth());
-        this.router.navigate(['/training']);
-    }
-
     logout() {
-        this.trainingService.cancelSubscriptions();
         this.afAuth.auth.signOut();
-        this.isAuthenticated = false;
-        this.authEvent.next(this.isAuth());
-        this.router.navigate(['/login']);
     }
 
     isAuth() {
