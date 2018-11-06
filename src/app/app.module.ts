@@ -5,53 +5,38 @@ import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from './material.module';
 import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireAuthModule, AngularFireAuth } from '@angular/fire/auth';
 
 import { AppComponent } from './app.component';
-import { TrainingComponent } from './training/training.component';
-import { CurrentTrainingComponent } from './training/current-training/current-training.component';
-import { NewTrainingComponent } from './training/new-training/new-training.component';
-import { PastTrainingsComponent } from './training/past-trainings/past-trainings.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
-import { StopTrainingConfirmComponent } from './training/current-training/stop-training-confirm.component';
 import { AuthService } from './auth/auth.service';
 import { TrainingService } from './training/training.service';
 import { environment } from 'src/environments/environment';
 import { UiService } from './shared/ui.service';
 import { AuthModule } from './auth/auth.module';
+import { TrainingModule } from './training/training.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TrainingComponent,
-    CurrentTrainingComponent,
-    NewTrainingComponent,
-    PastTrainingsComponent,
     WelcomeComponent,
     HeaderComponent,
-    SidenavListComponent,
-    StopTrainingConfirmComponent
+    SidenavListComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule,
     BrowserAnimationsModule,
     MaterialModule,
-    AppRoutingModule,
     FlexLayoutModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    AuthModule
+    AppRoutingModule,
+    AuthModule,
+    TrainingModule
   ],
   providers: [AuthService, TrainingService, UiService],
   bootstrap: [AppComponent],
-  entryComponents: [
-    StopTrainingConfirmComponent
-  ]
+
 })
 export class AppModule { }
