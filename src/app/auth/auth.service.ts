@@ -5,8 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 
 import { User } from "./user.model";
 import { AuthData } from "./auth-data.model";
-import { auth } from 'firebase';
-import { SubjectSubscriber } from 'rxjs/internal/Subject';
+import { UiService } from '../shared/ui.service';
 
 @Injectable()
 export class AuthService {
@@ -14,22 +13,20 @@ export class AuthService {
     private user: User;
     private isAuthenticated = false;
     
-    constructor(private router: Router, private afAuth: AngularFireAuth){}
+    constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService){}
 
     register(authData: AuthData) {
         this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password).then(
             success => this.proceedToLogin(),
-            error => console.log(error)
+            error => this.uiService.showSnackBar(error, 3000)
         );
     }
 
     login(authData: AuthData) {
         this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password).then(
             success => this.proceedToLogin(),
-            error => console.log(error)            
+            error => this.uiService.showSnackBar(error, 3000)
         );
-
-        this.proceedToLogin();
     }    
 
     proceedToLogin() {
