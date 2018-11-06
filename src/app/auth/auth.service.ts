@@ -16,16 +16,32 @@ export class AuthService {
     constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService){}
 
     register(authData: AuthData) {
+        this.uiService.loadingStateChanged.next(true);
+
         this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password).then(
-            success => this.proceedToLogin(),
-            error => this.uiService.showSnackBar(error, 3000)
+            success => {
+                this.uiService.loadingStateChanged.next(false);
+                this.proceedToLogin();
+            },
+            error => {
+                this.uiService.loadingStateChanged.next(false);
+                this.uiService.showSnackBar(error, 3000);
+            }
         );
     }
 
     login(authData: AuthData) {
+        this.uiService.loadingStateChanged.next(true);
+
         this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password).then(
-            success => this.proceedToLogin(),
-            error => this.uiService.showSnackBar(error, 3000)
+            success => {
+                this.uiService.loadingStateChanged.next(false);
+                this.proceedToLogin();
+            },
+            error => {
+                this.uiService.loadingStateChanged.next(false);
+                this.uiService.showSnackBar(error, 3000);
+            }
         );
     }    
 
