@@ -13,12 +13,14 @@ import { Subscription } from 'rxjs';
 export class NewTrainingComponent implements OnInit, OnDestroy {
   availableTrainings: Training[] = [];
   trainingSubscription: Subscription;
+  isLoading = true;
 
   constructor(private trainingService: TrainingService) { }
 
   ngOnInit() {
     this.trainingSubscription = this.trainingService.trainingsChanged.subscribe(trainings => {
       this.availableTrainings = trainings;
+      this.isLoading = false;
     });
 
     this.trainingService.fetchAvailableTrainings();
