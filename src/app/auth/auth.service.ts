@@ -6,6 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from "./user.model";
 import { AuthData } from "./auth-data.model";
 import { UiService } from '../shared/ui.service';
+import { TrainingService } from '../training/training.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
     private user: User;
     private isAuthenticated = false;
     
-    constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService){}
+    constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService, private trainingService: TrainingService){}
 
     register(authData: AuthData) {
         this.uiService.loadingStateChanged.next(true);
@@ -52,6 +53,7 @@ export class AuthService {
     }
 
     logout() {
+        this.trainingService.cancelSubscriptions();
         this.afAuth.auth.signOut();
         this.isAuthenticated = false;
         this.authEvent.next(this.isAuth());

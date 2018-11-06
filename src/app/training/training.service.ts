@@ -1,9 +1,9 @@
-import { Subject, Observable } from "rxjs";
+import { Injectable } from "@angular/core";
+import { Subject, Subscription } from "rxjs";
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from "@angular/fire/firestore";
 
 import { Training } from "./training.model";
-import { Injectable } from "@angular/core";
 
 @Injectable()
 export class TrainingService {
@@ -11,6 +11,7 @@ export class TrainingService {
     public trainingsChanged = new Subject<Training[]>();
     public finishedTrainingsChanged = new Subject<Training[]>();
 
+    private firebaseSubs: Subscription[] = [];
     private availableTrainings: Training[] = [];
     //     { id: 1, name: 'Crunches', duration: 30, calories: 100 },
     //     { id: 2, name: 'Squats', duration: 120, calories: 300 },
@@ -23,26 +24,30 @@ export class TrainingService {
     constructor(private db: AngularFirestore){}
 
     fetchAvailableTrainings() {
-        this.db.collection('availableTrainings')
-        .snapshotChanges()
-        .pipe(
-            map(actions => {
-                return actions.map(a => {
-                    const data = a.payload.doc.data();
-                    const id = a.payload.doc.id;
-                    return {
-                        id: id, 
-                        name: data['name'], 
-                        duration: data['duration'],
-                        calories: data['calories'] 
-                    };
-                }
-            )}
-        ))
-        .subscribe((trainings: Training[]) => {
-            this.availableTrainings = trainings;
-            this.trainingsChanged.next([...this.availableTrainings]);
-        });        
+        var subscription =  this.db.collection('availableTrainings')
+            .snapshotChanges()
+            .pipe(
+                map(actions => {
+                    return actions.map(a => {
+                        const data = a.payload.doc.data();
+                        const id = a.payload.doc.id;
+                        return {
+                            id: id, 
+                            name: data['name'], 
+                            duration: data['duration'],
+                            calories: data['calories'] 
+                        };
+                    }
+                )}
+            ))
+            .subscribe((trainings: Training[]) => {
+                this.availableTrainings = trainings;
+                this.trainingsChanged.next([...this.availableTrainings]);
+            }, error => {
+                //console.log(error);
+            });   
+        
+        this.firebaseSubs.push(subscription);
     }
     selectNewTraining(trainingId: string) {
         this.currentTraining = this.availableTrainings.find(t => t.id === trainingId);
@@ -86,15 +91,23 @@ export class TrainingService {
     fetchPastTrainings() {
         //return this.pastTrainings.slice();
 
-        return this.db.collection('finishedTrainings')
-        .valueChanges()        
-        .subscribe((trainings: Training[]) => {
-            this.finishedTrainingsChanged.next(trainings);
-        });        
+        var subscription = this.db.collection('finishedTrainings')
+            .valueChanges()        
+            .subscribe((trainings: Training[]) => {
+                this.finishedTrainingsChanged.next(trainings);
+            }, error => {
+                //console.log(error);
+            });        
+        
+        this.firebaseSubs.push(subscription);
     }
 
     private saveFinishedTraining(training: Training) {
 
         this.db.collection('finishedTrainings').add(training);
+    }
+
+    cancelSubscriptions() {
+        this.firebaseSubs.forEach(sub => sub.unsubscribe());
     }
 }
