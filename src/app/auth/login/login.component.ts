@@ -4,7 +4,6 @@ import { Subscription, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { AuthService } from '../auth.service';
-import { UiService } from 'src/app/shared/ui.service';
 import * as fromRoot from '../../app.reducer';
 
 @Component({
@@ -22,8 +21,7 @@ export class LoginComponent implements OnInit {
   emailInput = new FormControl("", [Validators.required, Validators.email]);
   passwordInput = new FormControl("", Validators.required);
 
-  constructor(fb: FormBuilder, private authService: AuthService, private uiService: UiService, 
-                private store: Store<{ui: fromRoot.State}>) {
+  constructor(fb: FormBuilder, private authService: AuthService, private store: Store<fromRoot.State>) {
     this.loginForm = fb.group({
       email: this.emailInput,
       password: this.passwordInput
