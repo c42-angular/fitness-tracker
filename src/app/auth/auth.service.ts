@@ -8,8 +8,10 @@ import { User } from "./user.model";
 import { AuthData } from "./auth-data.model";
 import { UiService } from '../shared/ui.service';
 import { TrainingService } from '../training/training.service';
+
 import * as fromRoot from '../app.reducer';
 import * as UI from '../shared/ui.actions';
+import * as Auth from './auth.actions';
 
 @Injectable()
 export class AuthService {
@@ -18,17 +20,18 @@ export class AuthService {
     private isAuthenticated = false;
     
     constructor(private router: Router, private afAuth: AngularFireAuth, private uiService: UiService, 
-                    private trainingService: TrainingService, private store: Store<{ui: fromRoot.State}>){}
+                    private trainingService: TrainingService, private store: Store<fromRoot.State>){}
 
     initAuthSubscriptions() {
         this.afAuth.authState.subscribe(user => {
             if (user) {
-                this.isAuthenticated = true;
-                this.authEvent.next(true);
+                this.isAuthenticated = true;                
+                this.store.dispatch(new Auth.SetAuthenticated());
                 this.router.navigate(['/training']);
             } else {
                 this.trainingService.cancelSubscriptions();
                 this.isAuthenticated = false;
+                this.store.dispatch(new Auth.SetUnauthenticated());
                 this.authEvent.next(false);
                 this.router.navigate(['/login']);
             }
