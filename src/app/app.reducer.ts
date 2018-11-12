@@ -1,26 +1,13 @@
+import { ActionReducerMap } from '@ngrx/store';
+
+import * as fromUI from './shared/ui.reducer';
+
+// application-wide state; holding slices of state corresponding to their reducers
 export interface State {
-    isLoading: boolean
+    ui: fromUI.State
 }
 
-const initialState: State = {
-    isLoading: false
-};
-
-export function appReducer(state = initialState, action) {
-    switch (action.type) {
-        case 'START_LOADING':
-            // return a NEW state (state is immutable)
-            return {
-                isLoading: true
-            };
-
-        case 'STOP_LOADING':
-            // return a NEW state (state is immutable)
-            return {
-                isLoading: false
-            };
-        default:
-            //return the old state
-            return state;
-    }
+// grouping all reducer functions
+export const reducers: ActionReducerMap<State> = {
+    ui: fromUI.uiReducer
 }
