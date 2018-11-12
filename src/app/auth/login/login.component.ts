@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { AuthService } from '../auth.service';
 import { UiService } from 'src/app/shared/ui.service';
-import * as fromApp from '../../app.reducer';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +23,7 @@ export class LoginComponent implements OnInit {
   passwordInput = new FormControl("", Validators.required);
 
   constructor(fb: FormBuilder, private authService: AuthService, private uiService: UiService, 
-                private store: Store<{ui: fromApp.State}>) {
+                private store: Store<{ui: fromRoot.State}>) {
     this.loginForm = fb.group({
       email: this.emailInput,
       password: this.passwordInput
@@ -32,7 +31,7 @@ export class LoginComponent implements OnInit {
    }
 
    ngOnInit() {
-     this.isLoading$ = this.store.pipe(map(state => state.ui.isLoading));
+     this.isLoading$ = this.store.select(fromRoot.getIsLoading);
 
      //this.store.subscribe(state => console.log(state));
    }

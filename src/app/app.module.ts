@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment';
 import { UiService } from './shared/ui.service';
 import { AuthModule } from './auth/auth.module';
 import { TrainingModule } from './training/training.module';
-import { appReducer } from './app.reducer';
+import { reducers } from './app.reducer';
 
 @NgModule({
   declarations: [
@@ -36,7 +36,7 @@ import { appReducer } from './app.reducer';
     AppRoutingModule,
     AuthModule,
     TrainingModule,
-    StoreModule.forRoot({ui: appReducer})
+    StoreModule.forRoot(reducers)
   ],
   providers: [AuthService, TrainingService, UiService],
   bootstrap: [AppComponent],
