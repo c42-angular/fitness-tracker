@@ -10,3 +10,6 @@ export class SetAuthenticated implements Action {
 export class SetUnauthenticated implements Action {
     readonly type = SET_UNAUTHENTICATED;    
 }
+
+// A new typescript type whose instance can either be instances of these two classes
+export type AuthActions = SetAuthenticated | SetUnauthenticated;
