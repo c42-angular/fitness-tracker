@@ -2,26 +2,18 @@ import { Injectable } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from "@angular/fire/firestore";
+import { Store } from "@ngrx/store";
 
 import { Training } from "./training.model";
+import * as fromRoot from './../app.reducer';
+import * as TrainingActions from './training.actions';
 
 @Injectable()
 export class TrainingService {
-    public trainingChanged = new Subject<Training>();
-    public trainingsChanged = new Subject<Training[]>();
     public finishedTrainingsChanged = new Subject<Training[]>();
-
     private firebaseSubs: Subscription[] = [];
-    private availableTrainings: Training[] = [];
-    //     { id: 1, name: 'Crunches', duration: 30, calories: 100 },
-    //     { id: 2, name: 'Squats', duration: 120, calories: 300 },
-    //     { id: 3, name: 'Sit-ups', duration: 300, calories: 500 },
-    //     { id: 4, name: 'Yoga', duration: 600, calories: 275 }
-    // ];
-    //private pastTrainings: Training[] = [];
-    private currentTraining: Training;
 
-    constructor(private db: AngularFirestore){}
+    constructor(private db: AngularFirestore, private store: Store<fromRoot.State>){}
 
     fetchAvailableTrainings() {
         var subscription =  this.db.collection('availableTrainings')
@@ -41,24 +33,27 @@ export class TrainingService {
                 )}
             ))
             .subscribe((trainings: Training[]) => {
-                this.availableTrainings = trainings;
-                this.trainingsChanged.next([...this.availableTrainings]);
+                console.log(`Got ${trainings.length} trainings from server`);
+                this.store.dispatch(new TrainingActions.SetAvailableTrainings(trainings));
             }, error => {
-                //console.log(error);
+                console.error(`Error getting trainings from server`);
+                console.error(error);
             });   
         
         this.firebaseSubs.push(subscription);
     }
+
     selectNewTraining(trainingId: string) {
-        this.currentTraining = this.availableTrainings.find(t => t.id === trainingId);
-        this.trainingChanged.next(this.getCurrentTraining());
+        this.store.dispatch(new TrainingActions.StartTraining(trainingId));
     }
 
     getCurrentTraining() {
-        return {...this.currentTraining};
+        // return {...this.currentTraining};
+        return null;
     }
 
     completeTraining() {
+/* TODO        
         const completedTraining: Training = {
             ...this.currentTraining, 
             date: new Date(),
@@ -66,13 +61,16 @@ export class TrainingService {
         };
 
         this.saveFinishedTraining(completedTraining);
-
-        this.currentTraining = null;
-        this.trainingChanged.next(null);
-        console.log(completedTraining);    
+*/
+        // this.currentTraining = null;
+        // this.trainingChanged.next(null);
+        this.store.dispatch(new TrainingActions.StopTraining());
+        //console.log(completedTraining);    
     }
 
     cancelTraining(progress: number) {
+/*
+        TODO
         const cancelledTraining: Training = {
             ...this.currentTraining, 
             date: new Date(),
@@ -80,12 +78,14 @@ export class TrainingService {
             calories: this.currentTraining.calories * progress / 100,
             state: 'cancelled'
         };
+        
 
         this.saveFinishedTraining(cancelledTraining);
-
-        this.currentTraining = null;
-        this.trainingChanged.next(null);
-        console.log(cancelledTraining);    
+*/
+        // this.currentTraining = null;
+        // this.trainingChanged.next(null);
+        this.store.dispatch(new TrainingActions.StopTraining());
+        //console.log(cancelledTraining);    
     }
 
     fetchPastTrainings() {
@@ -94,7 +94,8 @@ export class TrainingService {
         var subscription = this.db.collection('finishedTrainings')
             .valueChanges()        
             .subscribe((trainings: Training[]) => {
-                this.finishedTrainingsChanged.next(trainings);
+                //this.finishedTrainingsChanged.next(trainings);
+                this.store.dispatch(new TrainingActions.SetFinishedTrainings(trainings));
             }, error => {
                 //console.log(error);
             });        

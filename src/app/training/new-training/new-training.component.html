@@ -10,7 +10,7 @@
           <mat-card-content fxLayoutAlign="center">
             <mat-form-field *ngIf="!isLoading">
               <mat-select placeholder="Select type of training" ngModel name="selectedTraining" required>
-                <mat-option *ngFor="let training of availableTrainings" [value]="training.id">{{training.name}}</mat-option>
+                <mat-option *ngFor="let training of availableTrainings$ | async" [value]="training.id">{{training.name}}</mat-option>
                 <!-- <mat-option value="crunches">Crunches</mat-option>
                 <mat-option value="squats">Squats</mat-option>
                 <mat-option value="yoga">Yoga</mat-option> -->
