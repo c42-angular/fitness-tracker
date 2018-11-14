@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Store } from '@ngrx/store';
 
 import { StopTrainingConfirmComponent } from './stop-training-confirm.component';
 import { TrainingService } from '../training.service';
 import { Training } from '../training.model';
+import * as fromRoot from '../../app.reducer';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-current-training',
@@ -15,11 +18,13 @@ export class CurrentTrainingComponent implements OnInit {
   interval;
   currentTraining: Training;
 
-  constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
+  constructor(private dialog: MatDialog, private trainingService: TrainingService, private store: Store<fromRoot.State>) { }
 
   ngOnInit() {
-    this.currentTraining = this.trainingService.getCurrentTraining();
-    this.startOrResumeTraining();
+    this.store.select(fromRoot.getActiveTraining).pipe(take(1)).subscribe(t => {
+      this.currentTraining = t;
+      this.startOrResumeTraining();
+    });
   }
 
   startOrResumeTraining() {
